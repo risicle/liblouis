@@ -1199,9 +1199,14 @@ backTranslateString(const TranslationTableHeader *table, int mode, int currentPa
 			while (currentDotslen-- > 0) posMapping[pos++] = output->length;
 			continue;
 			break;
-		case CTO_LetterRule:
 		case CTO_NoNumberRule:
 		case CTO_NoContractRule:
+			// FIXME: Generally speaking nonumsign and nocontractsign do
+			// not cancel capitalization, but in our test cases they
+			// seem to. So the following hand-wavy change appears to
+			// work
+			allUpper = 0;
+		case CTO_LetterRule:
 			itsALetter = 1;
 			itsANumber = 0;
 			while (currentDotslen-- > 0) posMapping[pos++] = output->length;
