@@ -2972,8 +2972,8 @@ doOpcode:
 		case CTO_Undefined: {
 			// not passing pointer because compileBrailleIndicator may reallocate table
 			TranslationTableOffset ruleOffset = (*table)->undefined;
-			if (!compileBrailleIndicator(file, "undefined character opcode",
-						CTO_Undefined, &ruleOffset, noback, nofor, table))
+			if (!compileBrailleIndicator(file, "undefined character opcode", opcode,
+						&ruleOffset, noback, nofor, table))
 				return 0;
 			(*table)->undefined = ruleOffset;
 			return 1;
@@ -3167,8 +3167,8 @@ doOpcode:
 				TranslationTableOffset ruleOffset =
 						(*table)->emphRules[MAX_EMPH_CLASSES + i][begPhraseOffset];
 				if (!compileBrailleIndicator(file, "first word capital sign",
-							CTO_BegCapsPhraseRule + (8 * i), &ruleOffset, noback, nofor,
-							table))
+							i == 0 ? CTO_BegCapsPhrase : opcode, &ruleOffset, noback,
+							nofor, table))
 					return 0;
 				(*table)->emphRules[MAX_EMPH_CLASSES + i][begPhraseOffset] = ruleOffset;
 				return 1;
@@ -3187,7 +3187,7 @@ doOpcode:
 					ruleOffset = (*table)->emphRules[MAX_EMPH_CLASSES + i]
 													[endPhraseBeforeOffset];
 					if (!compileBrailleIndicator(file, "capital sign before last word",
-								CTO_EndCapsPhraseBeforeRule + (8 * i), &ruleOffset,
+								i == 0 ? CTO_EndCapsPhraseBefore : opcode, &ruleOffset,
 								noback, nofor, table))
 						return 0;
 					(*table)->emphRules[MAX_EMPH_CLASSES + i][endPhraseBeforeOffset] =
@@ -3205,8 +3205,8 @@ doOpcode:
 					ruleOffset = (*table)->emphRules[MAX_EMPH_CLASSES + i]
 													[endPhraseAfterOffset];
 					if (!compileBrailleIndicator(file, "capital sign after last word",
-								CTO_EndCapsPhraseAfterRule + (8 * i), &ruleOffset, noback,
-								nofor, table))
+								i == 0 ? CTO_EndCapsPhraseAfter : opcode, &ruleOffset,
+								noback, nofor, table))
 						return 0;
 					(*table)->emphRules[MAX_EMPH_CLASSES + i][endPhraseAfterOffset] =
 							ruleOffset;
@@ -3223,7 +3223,8 @@ doOpcode:
 				TranslationTableOffset ruleOffset =
 						(*table)->emphRules[MAX_EMPH_CLASSES + i][begOffset];
 				if (!compileBrailleIndicator(file, "first letter capital sign",
-							CTO_BegCapsRule + (8 * i), &ruleOffset, noback, nofor, table))
+							i == 0 ? CTO_BegCaps : opcode, &ruleOffset, noback, nofor,
+							table))
 					return 0;
 				(*table)->emphRules[MAX_EMPH_CLASSES + i][begOffset] = ruleOffset;
 				return 1;
@@ -3234,7 +3235,8 @@ doOpcode:
 				TranslationTableOffset ruleOffset =
 						(*table)->emphRules[MAX_EMPH_CLASSES + i][endOffset];
 				if (!compileBrailleIndicator(file, "last letter capital sign",
-							CTO_EndCapsRule + (8 * i), &ruleOffset, noback, nofor, table))
+							i == 0 ? CTO_EndCaps : opcode, &ruleOffset, noback, nofor,
+							table))
 					return 0;
 				(*table)->emphRules[MAX_EMPH_CLASSES + i][endOffset] = ruleOffset;
 				return 1;
@@ -3245,7 +3247,7 @@ doOpcode:
 				TranslationTableOffset ruleOffset =
 						(*table)->emphRules[MAX_EMPH_CLASSES + i][letterOffset];
 				if (!compileBrailleIndicator(file, "single letter capital sign",
-							CTO_CapsLetterRule + (8 * i), &ruleOffset, noback, nofor,
+							i == 0 ? CTO_CapsLetter : opcode, &ruleOffset, noback, nofor,
 							table))
 					return 0;
 				(*table)->emphRules[MAX_EMPH_CLASSES + i][letterOffset] = ruleOffset;
@@ -3257,7 +3259,7 @@ doOpcode:
 				TranslationTableOffset ruleOffset =
 						(*table)->emphRules[MAX_EMPH_CLASSES + i][begWordOffset];
 				if (!compileBrailleIndicator(file, "capital word",
-							CTO_BegCapsWordRule + (8 * i), &ruleOffset, noback, nofor,
+							i == 0 ? CTO_BegCapsWord : opcode, &ruleOffset, noback, nofor,
 							table))
 					return 0;
 				(*table)->emphRules[MAX_EMPH_CLASSES + i][begWordOffset] = ruleOffset;
@@ -3269,7 +3271,7 @@ doOpcode:
 				TranslationTableOffset ruleOffset =
 						(*table)->emphRules[MAX_EMPH_CLASSES + i][endWordOffset];
 				if (!compileBrailleIndicator(file, "capital word stop",
-							CTO_EndCapsWordRule + (8 * i), &ruleOffset, noback, nofor,
+							i == 0 ? CTO_EndCapsWord : opcode, &ruleOffset, noback, nofor,
 							table))
 					return 0;
 				(*table)->emphRules[MAX_EMPH_CLASSES + i][endWordOffset] = ruleOffset;
@@ -3408,8 +3410,7 @@ doOpcode:
 				// not passing pointer because compileBrailleIndicator may reallocate
 				// table
 				TranslationTableOffset ruleOffset = (*table)->emphRules[i][letterOffset];
-				if (!compileBrailleIndicator(file, "single letter",
-							CTO_Emph1LetterRule + letterOffset + (8 * i), &ruleOffset,
+				if (!compileBrailleIndicator(file, "single letter", opcode, &ruleOffset,
 							noback, nofor, table))
 					break;
 				(*table)->emphRules[i][letterOffset] = ruleOffset;
@@ -3420,9 +3421,8 @@ doOpcode:
 				// not passing pointer because compileBrailleIndicator may reallocate
 				// table
 				TranslationTableOffset ruleOffset = (*table)->emphRules[i][begWordOffset];
-				if (!compileBrailleIndicator(file, "word",
-							CTO_Emph1LetterRule + begWordOffset + (8 * i), &ruleOffset,
-							noback, nofor, table))
+				if (!compileBrailleIndicator(
+							file, "word", opcode, &ruleOffset, noback, nofor, table))
 					break;
 				(*table)->emphRules[i][begWordOffset] = ruleOffset;
 				ok = 1;
@@ -3432,9 +3432,8 @@ doOpcode:
 				// not passing pointer because compileBrailleIndicator may reallocate
 				// table
 				TranslationTableOffset ruleOffset = (*table)->emphRules[i][endWordOffset];
-				if (!compileBrailleIndicator(file, "word stop",
-							CTO_Emph1LetterRule + endWordOffset + (8 * i), &ruleOffset,
-							noback, nofor, table))
+				if (!compileBrailleIndicator(
+							file, "word stop", opcode, &ruleOffset, noback, nofor, table))
 					break;
 				(*table)->emphRules[i][endWordOffset] = ruleOffset;
 				ok = 1;
@@ -3454,8 +3453,7 @@ doOpcode:
 				// not passing pointer because compileBrailleIndicator may reallocate
 				// table
 				TranslationTableOffset ruleOffset = (*table)->emphRules[i][begOffset];
-				if (!compileBrailleIndicator(file, "first letter",
-							CTO_Emph1LetterRule + begOffset + (8 * i), &ruleOffset,
+				if (!compileBrailleIndicator(file, "first letter", opcode, &ruleOffset,
 							noback, nofor, table))
 					break;
 				(*table)->emphRules[i][begOffset] = ruleOffset;
@@ -3475,8 +3473,7 @@ doOpcode:
 				// not passing pointer because compileBrailleIndicator may reallocate
 				// table
 				TranslationTableOffset ruleOffset = (*table)->emphRules[i][endOffset];
-				if (!compileBrailleIndicator(file, "last letter",
-							CTO_Emph1LetterRule + endOffset + (8 * i), &ruleOffset,
+				if (!compileBrailleIndicator(file, "last letter", opcode, &ruleOffset,
 							noback, nofor, table))
 					break;
 				(*table)->emphRules[i][endOffset] = ruleOffset;
@@ -3488,8 +3485,7 @@ doOpcode:
 				// table
 				TranslationTableOffset ruleOffset =
 						(*table)->emphRules[i][begPhraseOffset];
-				if (!compileBrailleIndicator(file, "first word",
-							CTO_Emph1LetterRule + begPhraseOffset + (8 * i), &ruleOffset,
+				if (!compileBrailleIndicator(file, "first word", opcode, &ruleOffset,
 							noback, nofor, table))
 					break;
 				(*table)->emphRules[i][begPhraseOffset] = ruleOffset;
@@ -3507,8 +3503,7 @@ doOpcode:
 					// table
 					TranslationTableOffset ruleOffset =
 							(*table)->emphRules[i][endPhraseBeforeOffset];
-					if (!compileBrailleIndicator(file, "last word before",
-								CTO_Emph1LetterRule + endPhraseBeforeOffset + (8 * i),
+					if (!compileBrailleIndicator(file, "last word before", opcode,
 								&ruleOffset, noback, nofor, table))
 						break;
 					(*table)->emphRules[i][endPhraseBeforeOffset] = ruleOffset;
@@ -3524,8 +3519,7 @@ doOpcode:
 					// table
 					TranslationTableOffset ruleOffset =
 							(*table)->emphRules[i][endPhraseAfterOffset];
-					if (!compileBrailleIndicator(file, "last word after",
-								CTO_Emph1LetterRule + endPhraseAfterOffset + (8 * i),
+					if (!compileBrailleIndicator(file, "last word after", opcode,
 								&ruleOffset, noback, nofor, table))
 						break;
 					(*table)->emphRules[i][endPhraseAfterOffset] = ruleOffset;
@@ -3592,8 +3586,8 @@ doOpcode:
 		case CTO_LetterSign: {
 			// not passing pointer because compileBrailleIndicator may reallocate table
 			TranslationTableOffset ruleOffset = (*table)->letterSign;
-			if (!compileBrailleIndicator(file, "letter sign", CTO_LetterRule, &ruleOffset,
-						noback, nofor, table))
+			if (!compileBrailleIndicator(
+						file, "letter sign", opcode, &ruleOffset, noback, nofor, table))
 				return 0;
 			(*table)->letterSign = ruleOffset;
 			return 1;
@@ -3630,8 +3624,8 @@ doOpcode:
 		case CTO_NumberSign: {
 			// not passing pointer because compileBrailleIndicator may reallocate table
 			TranslationTableOffset ruleOffset = (*table)->numberSign;
-			if (!compileBrailleIndicator(file, "number sign", CTO_NumberRule, &ruleOffset,
-						noback, nofor, table))
+			if (!compileBrailleIndicator(
+						file, "number sign", opcode, &ruleOffset, noback, nofor, table))
 				return 0;
 			(*table)->numberSign = ruleOffset;
 			return 1;
@@ -3680,7 +3674,7 @@ doOpcode:
 		case CTO_NoContractSign: {
 			// not passing pointer because compileBrailleIndicator may reallocate table
 			TranslationTableOffset ruleOffset = (*table)->noContractSign;
-			if (!compileBrailleIndicator(file, "no contractions sign", CTO_NoContractRule,
+			if (!compileBrailleIndicator(file, "no contractions sign", opcode,
 						&ruleOffset, noback, nofor, table))
 				return 0;
 			(*table)->noContractSign = ruleOffset;
@@ -3760,7 +3754,7 @@ doOpcode:
 		case CTO_BegComp: {
 			// not passing pointer because compileBrailleIndicator may reallocate table
 			TranslationTableOffset ruleOffset = (*table)->begComp;
-			if (!compileBrailleIndicator(file, "begin computer braille", CTO_BegCompRule,
+			if (!compileBrailleIndicator(file, "begin computer braille", opcode,
 						&ruleOffset, noback, nofor, table))
 				return 0;
 			(*table)->begComp = ruleOffset;
@@ -3769,7 +3763,7 @@ doOpcode:
 		case CTO_EndComp: {
 			// not passing pointer because compileBrailleIndicator may reallocate table
 			TranslationTableOffset ruleOffset = (*table)->endComp;
-			if (!compileBrailleIndicator(file, "end computer braslle", CTO_EndCompRule,
+			if (!compileBrailleIndicator(file, "end computer braslle", opcode,
 						&ruleOffset, noback, nofor, table))
 				return 0;
 			(*table)->endComp = ruleOffset;
@@ -3901,8 +3895,8 @@ doOpcode:
 			TranslationTableOffset ruleOffset;
 			ruleChars.length = 1;
 			ruleChars.chars[0] = 'a';
-			if (!addRule(file, CTO_CapsNoContRule, &ruleChars, NULL, after, before,
-						&ruleOffset, NULL, noback, nofor, table))
+			if (!addRule(file, opcode, &ruleChars, NULL, after, before, &ruleOffset, NULL,
+						noback, nofor, table))
 				return 0;
 			(*table)->capsNoCont = ruleOffset;
 			return 1;
